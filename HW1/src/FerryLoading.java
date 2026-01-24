@@ -6,7 +6,6 @@ public class FerryLoading {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
         int numCases = scanner.nextInt();
         TestCase[] testCases = new TestCase[numCases];
 
@@ -73,6 +72,7 @@ public class FerryLoading {
                 results[carIndex] = time;
             }
         }
+
         for (int result : results) {
             System.out.println(result);
         }
