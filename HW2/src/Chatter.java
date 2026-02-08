@@ -36,7 +36,7 @@ public class Chatter {
                 groupSizes.put(root, groupSizes.getOrDefault(root, 0) + 1);
             }
             sb.append(groupSizes.size());
-            List<Integer> sizes = groupSizes.values().stream().sorted((h, q) -> q - h).toList(); // desc
+            List<Integer> sizes = groupSizes.values().stream().sorted((h, q) -> q - h).toList(); // descending order
             // collapse duplicate sizes into "sizexcount" format
             int i = 0;
             while (i < sizes.size()) {
