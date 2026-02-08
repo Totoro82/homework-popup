@@ -8,17 +8,21 @@ public class LemonadeTrade {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
+
         int n = Integer.parseInt(st.nextToken());
-        if(n == 0) { System.out.printf("%.15f%n", 0.0); return; }
-        Trade[] trade = new Trade[n];
+
+        if(n == 0) { System.out.printf("%.7f\n", 0.0); return; }
+        Trade[] trades = new Trade[n];
         for (int i = 0; i < n; i++) {
             st = new StringTokenizer(br.readLine());
-            trade[i] = new Trade(st.nextToken(), st.nextToken(), Double.parseDouble(st.nextToken()));
+            trades[i] = new Trade(st.nextToken(), st.nextToken(), Double.parseDouble(st.nextToken()));
         }
-        TradeSolver tradeSolver = new TradeSolver(n, trade);
-        System.out.printf("%.15f%n", tradeSolver.solve());
+
+        TradeSolver tradeSolver = new TradeSolver(n, trades);
+        System.out.printf("%.7f\n", tradeSolver.solve());
     }
 }
+
 
 class Trade {
     final String offered, wanted;
@@ -31,23 +35,18 @@ class Trade {
     }
 }
 
-class TradeSolver {
-    final int n;
-    final Trade[] trades;
-
-    public TradeSolver(int n, Trade[] trades) {
-        this.n = n;
-        this.trades = trades;
-    }
-
+record TradeSolver(int n, Trade[] trades) {
     double solve() {
         HashMap<String, Double> dp = new HashMap<>();
-        dp.put("pink", 1.0); // initially we have 1 liter of pink lemonade
-        for(Trade trade: trades) {
-            double quantityWanted = dp.getOrDefault(trade.wanted, 0.0);
-            double quantityOffered = quantityWanted * trade.exchangeRate;
-            dp.put(trade.offered, Math.max(quantityOffered, dp.getOrDefault(trade.offered, 0.0)));
+        dp.put("pink", 0.0); // log(1.0) = 0
+        for (Trade trade : trades) {
+            double logWanted = dp.getOrDefault(trade.wanted, Double.NEGATIVE_INFINITY);
+            double logOffered = logWanted + Math.log(trade.exchangeRate);
+            dp.put(trade.offered, Math.max(logOffered, dp.getOrDefault(trade.offered, Double.NEGATIVE_INFINITY)));
         }
-        return Math.min(10.0, dp.getOrDefault("blue", 0.0));
+        double logBlue = dp.getOrDefault("blue", Double.NEGATIVE_INFINITY);
+        if (logBlue == Double.NEGATIVE_INFINITY) return 0.0;
+        if (logBlue > Math.log(10.0)) return 10.0;
+        return Math.exp(logBlue);
     }
 }
