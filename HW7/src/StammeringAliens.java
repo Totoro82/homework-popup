@@ -52,9 +52,9 @@ public class StammeringAliens {
                     int curB = cur + gap < cadena.length() ? rank[cur + gap] : -1;
 
                     if (rank[prev] == rank[cur] && prevB == curB) {
-                        tmp[cur] = tmp[prev];       // iguales → mismo rank
+                        tmp[cur] = tmp[prev]; // iguales → mismo rank
                     } else {
-                        tmp[cur] = tmp[prev] + 1;   // distintos → rank + 1
+                        tmp[cur] = tmp[prev] + 1;// distintos → rank + 1
                     }
                 }
                 rank = tmp;
@@ -62,21 +62,24 @@ public class StammeringAliens {
 
 
 
-            int[] lcpArray = new int[cadena.length()];
-            for (int i = 0; i < cadena.length() - 1; i++) {
-                int index = suffixArray[i], index2 = suffixArray[i+1];
-                int k = 0;
-                while(k < cadena.length() - index && k < cadena.length() - index2 &&
-                        cadena.charAt(index + k) == (cadena.charAt(index2 + k))) {
-                    k++;
+            // Kasai: LCP in O(n)
+            int n = cadena.length();
+            int[] lcpArray = new int[n - 1]; // n-1 pares entre n sufijos
+            int l = 0; // longitud del prefijo comun actual
+            for (int i = 0; i < n; i++) {
+                if (rank[i] == 0) { l = 0; continue; } // es el primer sufijo en orden
+                int j = suffixArray[rank[i] - 1]; // posicion del sufijo anterior en el orden alfabetico
+                while (i + l < n && j + l < n && cadena.charAt(i + l) == cadena.charAt(j + l)) {
+                    l++; // cuento cuantos chars comparten
                 }
-                lcpArray[i] = k;
+                lcpArray[rank[i] - 1] = l; // guardo el lcp entre el sufijo anterior y este
+                if (l > 0) l--; // para el siguiente, empiezo desde l-1
             }
 
             //sliding window: find longest substring appearing at least m times
             int best = 0;
             int bestPos = -1;
-            for (int i = 0; i <= lcpArray.length - m; i++) {
+            for (int i = 0; i <= lcpArray.length - (m - 1); i++) {
                 int min = Integer.MAX_VALUE;
                 for (int j = 0; j < m - 1; j++) {
                     min = Math.min(min, lcpArray[i + j]);
