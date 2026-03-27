@@ -53,6 +53,7 @@ public class Herkabe {
 
     }
 
+    // O(N * L) where L = max name length, each char visited once across all recursive calls
     // names[start..end) share a common prefix of length depth
     static long solve(String[] names, int start, int end, int depth) {
         long result = 1;
