@@ -19,6 +19,7 @@ public class Crabbles {
         int n = Integer.parseInt(st.nextToken()); //words in dictionary
 
         isEnd = new boolean[2500001];
+        // trie[j][m] es desde el nodo j si sigo la letra m llego al nodo ...?
         trie = new int[2500001][26];
         Arrays.fill(trie[0], -1);
         int size = 1;//acts as node id
