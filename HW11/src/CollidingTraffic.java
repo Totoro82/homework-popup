@@ -45,12 +45,12 @@ public class CollidingTraffic {
                     double c = dx*dx + dy*dy;
 
                     if (c <= r*r) { best = 0; continue; } // already inside at t=0, collision now
-                    if (a == 0) continue; // same velocity, constant distance
+                    if (a == 0) continue; // same velocity, constant distance, they never collide
                     if (b >= 0) continue; // moving apart or at minimum already
                     double disc = b*b - 4 * a * (c - r * r);
                     if (disc < 0) continue; // never reach r
 
-                    double t = (-b - Math.sqrt(disc)) / (2 * a);
+                    double t = (-b - Math.sqrt(disc)) / (2 * a); //- to get t1
                     if (t < best) best = t;
                 }
             }
