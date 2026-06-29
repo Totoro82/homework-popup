@@ -30,39 +30,37 @@ public class WorkReduction {
                 agencyList.add(agency);
             }
 
-            List<AgencyResult> agencyResults = solve(n, m, l, agencyList);
+            List<AgencyResult> agencyResults = solve(n, m, agencyList);
 
-            sb.append("Case " + (i+1) + "\n");
-
-            for (AgencyResult agencyResult: agencyResults) {
+            sb.append("Case ").append(i + 1).append('\n');
+            for (AgencyResult agencyResult : agencyResults) {
                 sb.append(agencyResult);
             }
-
         }
         System.out.println(sb);
     }
 
-    private static List<AgencyResult> solve(int n, int m, int l, List<Agency> agencyList) {
-        List<AgencyResult> agencyResultList = new ArrayList<>();
-        for(Agency agency: agencyList) {
-            int cost = 0;
-            int auxN = n;
-            while((auxN / 2) >= m && agency.reduceByhalf() < (auxN - auxN/2) * agency.reduceOneUnit()) {
-                auxN /= 2;
-                cost += agency.reduceByhalf();
-            }
-            while(auxN != m) {
-                auxN--;
-                cost += agency.reduceOneUnit();
-            }
-            agencyResultList.add(new AgencyResult(agency.name(), cost));
+    private static List<AgencyResult> solve(int n, int m, List<Agency> agencyList) {
+        List<AgencyResult> results = new ArrayList<>();
+        for (Agency agency : agencyList) {
+            results.add(new AgencyResult(agency.name(), minCost(agency, n, m)));
         }
-
-        agencyResultList.sort(
+        results.sort(
                 Comparator.comparingInt(AgencyResult::result)
                         .thenComparing(AgencyResult::name)
         );
-        return agencyResultList;
+        return results;
+    }
+
+    private static int minCost(Agency agency, int workload, int target) {
+        int cost = 0;
+        while (workload / 2 >= target
+                && agency.reduceByhalf() < (workload - workload / 2) * agency.reduceOneUnit()) {
+            cost += agency.reduceByhalf();
+            workload /= 2;
+        }
+        cost += (workload - target) * agency.reduceOneUnit(); // el resto, de una vez
+        return cost;
     }
 }
 
